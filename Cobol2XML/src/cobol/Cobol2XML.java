@@ -44,6 +44,8 @@ public class Cobol2XML {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
+		System.out.println("arg[0]" + args[0]);
+		System.out.println("arg[1]" + args[1]);
 		System.out.println("Cobol2XML V0.1.0");
 		XMLPayload xmlp = new XMLPayload();
 		
