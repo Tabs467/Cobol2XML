@@ -24,10 +24,10 @@ package cobol;
 import utensil.*;
 
 public class Cobol implements PubliclyCloneable {
-	protected String commentLine;
 	protected String program_id;
 	protected String sectionName;
 	protected String divisionName;
+	
 	protected int dayDateWritten = 0;
 	protected String monthDateWritten;
 	protected int yearDateWritten = 0;
@@ -36,6 +36,22 @@ public class Cobol implements PubliclyCloneable {
 	protected String constantName;
 	protected double constantValue;
 	protected int lineNumber = 0;
+	
+	// Comment Line
+	protected String commentLine;
+	
+	// Decimal Variable
+	protected String decimalVariableName;
+	protected double decimalVariableWholeNumbers;
+	
+	// String Variable
+	protected String stringVariableName;
+	protected String stringVariableValue;
+	protected double stringVariableSize;
+	
+	// Display Text Variable
+	protected String displayText;
+	
 
 	
 	/**
@@ -164,6 +180,17 @@ public class Cobol implements PubliclyCloneable {
 		return yearDateWritten;
 	}
 	
+	
+	/**
+	 * Return the line of text to display from the display command in the COBOL program.
+	 *
+	 * @return the line of text to display from the display command in the COBOL program.
+	 */
+	public String getDisplayText() {
+		return displayText;
+	}
+	
+	
 	/**
 	 * Set a line of commented text from the COBOL program.
 	 *
@@ -172,8 +199,15 @@ public class Cobol implements PubliclyCloneable {
 	public void setCommentLine(String commentLine) {
 		this.commentLine = commentLine;
 	}
-
-
+	
+	/**
+	 * Set a line of text to display from the display command in the COBOL program.
+	 *
+	 * @return line of text to display from the COBOL program
+	 */
+	public void setDisplayText(String displayText) {
+		this.displayText = displayText;
+	}
 
 	/**
 	 * Set the name of this cobol file.
@@ -231,10 +265,6 @@ public class Cobol implements PubliclyCloneable {
 	}
 	
 	
-	
-
-	
-	
 	/**
 	 * Return the constant name.
 	 *
@@ -256,6 +286,56 @@ public class Cobol implements PubliclyCloneable {
 	
 	
 	/**
+	 * Return the decimal variable name.
+	 *
+	 * @return the decimal variable name
+	 */
+	public String getDecimalVariableName() {
+		return decimalVariableName;
+	}
+	
+	
+	/**
+	 * Return how many whole numbers the decimal variable is able to hold.
+	 *
+	 * @return how many whole numbers the decimal variable is able to hold
+	 */
+	public Double getDecimalVariableWholeNumbers() {
+		return decimalVariableWholeNumbers;
+	}
+	
+	
+	/**
+	 * Return the string variable name.
+	 *
+	 * @return the string variable name
+	 */
+	public String getStringVariableName() {
+		return stringVariableName;
+	}
+	
+	
+	/**
+	 * Return the string variable value.
+	 *
+	 * @return the string variable value
+	 */
+	public String getStringVariableValue() {
+		return stringVariableValue;
+	}
+	
+	
+	/**
+	 * Return how many bytes the string variable is able to hold.
+	 *
+	 * @return how many bytes the string variable is able to hold
+	 */
+	public Double getStringVariableSize() {
+		return stringVariableSize;
+	}
+	
+	
+	/**
 	 * Return the line number.
 	 *
 	 * @return the line number
@@ -263,7 +343,6 @@ public class Cobol implements PubliclyCloneable {
 	public int getLineNumber() {
 		return lineNumber;
 	}
-
 
 	
 	/**
@@ -287,6 +366,56 @@ public class Cobol implements PubliclyCloneable {
 	
 	
 	/**
+	 * Set the decimal variable name 
+	 *
+	 * @param  String decimalVariableName
+	 */
+	public void setDecimalVariableName(String decimalVariableName) {
+		this.decimalVariableName = decimalVariableName;
+	}
+	
+	
+	/**
+	 * Set how many whole numbers the decimal variable should be able to hold
+	 *
+	 * @param  Double decimalVariableWholeNumbers
+	 */
+	public void setDecimalVariableWholeNumbers(Double decimalVariableWholeNumbers) {
+		this.decimalVariableWholeNumbers = decimalVariableWholeNumbers;
+	}
+	
+	
+	/**
+	 * Set the string variable name 
+	 *
+	 * @param  String stringVariableName
+	 */
+	public void setStringVariableName(String stringVariableName) {
+		this.stringVariableName = stringVariableName;
+	}
+	
+	
+	/**
+	 * Set the string variable value
+	 *
+	 * @param  String stringVariableValue
+	 */
+	public void setStringVariableValue(String stringVariableValue) {
+		this.stringVariableValue = stringVariableValue;
+	}
+	
+	
+	/**
+	 * Set how many bytes the string variable should be able to hold
+	 *
+	 * @param  Double stringVariableSize
+	 */
+	public void setStringVariableSize(Double decimalVariableSize) {
+		this.stringVariableSize = decimalVariableSize;
+	}
+	
+	
+	/**
 	 * Set the line number
 	 *
 	 * @param  int lineNumber
@@ -296,7 +425,7 @@ public class Cobol implements PubliclyCloneable {
 	}
 	
 	
-
+	
 	/**
 	 * Return a textual description of this cobol type.
 	 * 

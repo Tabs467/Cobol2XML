@@ -25,8 +25,7 @@ working-storage section.
     88  base_10                         value 10.
     88  base_16                         value 16.
 
-01  hex_dec_data                        pic x(48) value
-    "000101202303404505606707808909A10B11C12D13E14F15".
+01  hex_dec_data                        pic x(48) value "000101202303404505606707808909A10B11C12D13E14F15".
 
 01  hex_decimal_table redefines hex_dec_data.
     03  hex_table
@@ -94,7 +93,7 @@ decimal-to-base.
 decimal-to-base-ex.
 
 ***---
-***---  convert from base to dicimal system
+***---  convert from base to decimal system
 ***---
 base-to-decimal.
 

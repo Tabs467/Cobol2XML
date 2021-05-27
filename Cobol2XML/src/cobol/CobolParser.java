@@ -23,9 +23,11 @@ package cobol;
 import parse.Alternation;
 import parse.Empty;
 import parse.Parser;
+import parse.Repetition;
 import parse.Sequence;
 import parse.tokens.CaselessLiteral;
 import parse.tokens.Num;
+import parse.tokens.QuotedString;
 import parse.tokens.Symbol;
 import parse.tokens.Tokenizer;
 import parse.tokens.Word;
@@ -44,44 +46,156 @@ public class CobolParser {
 	public Parser cobol() {
 		Alternation a = new Alternation();
 		
-		a.add(constantValue());
+		a.add(CommentLine());
+		
+		a.add(ConstantValue());
+		
+		a.add(DecimalVariableDeclaration());
+		
+		a.add(StringVariableDeclaration());
+		
+		a.add(Display());
 		
 		Symbol fullstop = new Symbol('.');
 		fullstop.discard();
 		
-		a.add( ProgramID() );
+		a.add(ProgramID());
 		
-		a.add( DivisionName() );
+		a.add(DivisionName());
 		
-		a.add( SectionName() );
+		a.add(SectionName());
 		
-		a.add( DateWritten() );
+		a.add(DateWritten());
 		
 		a.add(new Empty());
 		return a;
 	}
 	
 	
+	
 	/*
-	* Return a parser that will recognize the grammar:
+	* Return a parser that will recognise the grammar:
 	*
-	* <line number> <contstant name> "value" <constant value>.
+	* ***--- <Comment Text>
 	*
 	*/
-	protected Parser constantValue() {
+	protected Parser CommentLine() {
+		Sequence s = new Sequence();
+		s.add(new Symbol("*").discard());
+		s.add(new Symbol("*").discard());
+		s.add(new Symbol("*").discard());
+		s.add(new Symbol("-").discard());
+		s.add(new Symbol("-").discard());
+		s.add(new Symbol("-").discard());
+		
+		Alternation alternation = new Alternation();
+		alternation.add(new Word());
+		alternation.add(new Symbol("("));
+		alternation.add(new Symbol(")"));
+		alternation.add(new Num());
+		
+		Repetition r = new Repetition(alternation);
+		
+		s.add(r);
+		
+		s.setAssembler(new CommentLineAssembler());
+		return s;
+	}
+	
+	
+	
+	/*
+	* Return a parser that will recognise the grammar:
+	*
+	* display <Text to Display>
+	*
+	*/
+	protected Parser Display() {
+		Sequence s = new Sequence();
+		s.add(new CaselessLiteral("display").discard());
+		
+		Alternation alternation = new Alternation();
+		alternation.add(new Word());
+		alternation.add(new QuotedString());
+		
+		Repetition r = new Repetition(alternation);
+		
+		s.add(r);
+		
+		s.setAssembler(new DisplayAssembler());
+		return s;
+	}
+
+	
+	
+	/*
+	* Return a parser that will recognise the grammar:
+	*
+	* <line number> <constant name> "value" <constant value>.
+	*
+	*/
+	protected Parser ConstantValue() {
 		//System.out.println("constantValue()");
 		Sequence s = new Sequence();
-		s.add(new Num() );
-		s.add(new Word() );
-		s.add(new CaselessLiteral("value") );
-		s.add(new Num() );
+		s.add(new Num());
+		s.add(new Word());
+		s.add(new CaselessLiteral("value"));
+		s.add(new Num());
 		s.setAssembler(new ConstantValueAssembler());
 		return s;
 	}
 	
 	
 	/*
-	 * Return a parser that will recognize the grammar:
+	* Return a parser that will recognise the grammar:
+	*
+	* "01" <variable name> "pic" <Number Base> "(" <Number of whole numbers that can be stored> ")"
+	*
+	*/
+	protected Parser DecimalVariableDeclaration() {
+		Sequence s = new Sequence();
+		s.add(new Num());
+		s.add(new Word());
+		s.add(new CaselessLiteral("pic"));
+		s.add(new Num());
+		s.add(new Symbol("("));
+		s.add(new Num());
+		s.add(new Symbol(")"));
+		
+		s.setAssembler(new DecimalVariableDeclarationAssembler());
+		return s;
+	}
+	
+	
+	/*
+	* Return a parser that will recognise the grammar:
+	*
+	* "01" <variable name> "picx(" <Number of bytes string variable can store> ") value "<String Variable Value>"
+	* 
+	* This parser recognises data defined within the first level only
+	* as it is the most inclusive level-number.
+	* 
+	*/
+	protected Parser StringVariableDeclaration() {
+		Sequence s = new Sequence();
+		s.add(new Num());
+		s.add(new Word());
+		s.add(new CaselessLiteral("pic"));
+		s.add(new CaselessLiteral("x"));
+		s.add(new Symbol("("));
+		s.add(new Num());
+		s.add(new Symbol(")"));
+		s.add(new CaselessLiteral("value"));
+		s.add(new QuotedString());
+		
+		s.setAssembler(new StringVariableDeclarationAssembler());
+		return s;
+	}
+	
+	
+	
+	/*
+	 * Return a parser that will recognise the grammar:
 	 * 
 	 *    Program Identifier = Word
 	 *
@@ -93,7 +207,6 @@ public class CobolParser {
 		s.add(new Word().setAssembler(new Program_idAssembler()));
 		return s;
 	}
-
 
 
 	/*
@@ -111,7 +224,7 @@ public class CobolParser {
 	}
 	
 	/*
-	 * Return a parser that will recognize the grammar:
+	 * Return a parser that will recognise the grammar:
 	 * 
 	 *    Section Name = Word
 	 *
@@ -147,7 +260,7 @@ public class CobolParser {
 		return s;
 	}
 
-
+	
 	/**
 	 * Return the primary parser for this class -- cobol().
 	 *
